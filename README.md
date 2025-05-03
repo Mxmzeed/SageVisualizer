@@ -8,3 +8,8 @@
 4. Run the app on the server by typing this command: npx parcel ./src/index.html
 5. Ctrl + click on the server link "http://localhost:1234" to open the app in your browser;
 6. Have fun!
+
+# The "beast" version of this project
+This is a refactored version made by the amazing [Kuhung](https://github.com/kuhung)
+![image](https://github.com/user-attachments/assets/d957bdde-3a79-42f6-9ff4-b8aa73e7ec55)
+[LINK](https://github.com/kuhung/audiovisualizer)
