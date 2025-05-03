@@ -11,5 +11,5 @@
 
 # The "beast" version of this project
 This is a refactored version made by the amazing [Kuhung](https://github.com/kuhung)
-![image](https://github.com/user-attachments/assets/d957bdde-3a79-42f6-9ff4-b8aa73e7ec55)
+![image](https://github.com/kuhung/audiovisualizer/blob/main/online_example.gif)
 [LINK](https://github.com/kuhung/audiovisualizer)
