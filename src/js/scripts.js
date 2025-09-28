@@ -63,7 +63,7 @@ const mat = new THREE.ShaderMaterial({
 	fragmentShader
 });
 
-const geo = new THREE.IcosahedronGeometry(4, 16 );
+const geo = new THREE.IcosahedronGeometry(4, 17);
 const mesh = new THREE.Mesh(geo, mat);
 scene.add(mesh);
 mesh.material.wireframe = true;
@@ -85,16 +85,14 @@ const analyser = new THREE.AudioAnalyser(sound, 32);
 
 const gui = new GUI();
 
-const colorsFolder = gui.addFolder('Colors');
-colorsFolder.add(params, 'red', 0, 1).onChange(function(value) {
-	uniforms.u_red.value = Number(value);
-});
-colorsFolder.add(params, 'green', 0, 1).onChange(function(value) {
-	uniforms.u_green.value = Number(value);
-});
-colorsFolder.add(params, 'blue', 0, 1).onChange(function(value) {
-	uniforms.u_blue.value = Number(value);
-});
+
+uniforms.u_red.value = Number(0.3);
+
+uniforms.u_green.value = Number(0.9);
+
+
+uniforms.u_blue.value = Number(0.5);
+
 
 const bloomFolder = gui.addFolder('Bloom');
 bloomFolder.add(params, 'threshold', 0, 1).onChange(function(value) {
