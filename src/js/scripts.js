@@ -54,13 +54,16 @@ const uniforms = {
 	u_blue: {type: 'f', value: 1.0}
 }
 
+import vertexShader from '../shaders/vertex.glsl';
+import fragmentShader from '../shaders/fragment.glsl';
+
 const mat = new THREE.ShaderMaterial({
 	uniforms,
-	vertexShader: document.getElementById('vertexshader').textContent,
-	fragmentShader: document.getElementById('fragmentshader').textContent
+	vertexShader,
+	fragmentShader
 });
 
-const geo = new THREE.IcosahedronGeometry(4, 30 );
+const geo = new THREE.IcosahedronGeometry(4, 16 );
 const mesh = new THREE.Mesh(geo, mat);
 scene.add(mesh);
 mesh.material.wireframe = true;
@@ -71,7 +74,7 @@ camera.add(listener);
 const sound = new THREE.Audio(listener);
 
 const audioLoader = new THREE.AudioLoader();
-audioLoader.load('./assets/Beats.mp3', function(buffer) {
+audioLoader.load('./assets/openai-fm-nova-audio.mp3', function(buffer) {
 	sound.setBuffer(buffer);
 	window.addEventListener('click', function() {
 		sound.play();
