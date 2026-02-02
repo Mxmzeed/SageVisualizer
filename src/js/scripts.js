@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import {GUI} from 'dat.gui';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass';
@@ -21,20 +20,22 @@ const camera = new THREE.PerspectiveCamera(
 const params = {
 	red: 1.0,
 	green: 1.0,
-	blue: 1.0,
-	threshold: 0.5,
-	strength: 0.5,
-	radius: 0.8
+	blue: 1.0
 }
+
+// Hardcoded bloom properties
+const BLOOM_THRESHOLD = 0;
+const BLOOM_STRENGTH = 0.38;
+const BLOOM_RADIUS = 1;
 
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const renderScene = new RenderPass(scene, camera);
 
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight));
-bloomPass.threshold = params.threshold;
-bloomPass.strength = params.strength;
-bloomPass.radius = params.radius;
+bloomPass.threshold = BLOOM_THRESHOLD;
+bloomPass.strength = BLOOM_STRENGTH;
+bloomPass.radius = BLOOM_RADIUS;
 
 const bloomComposer = new EffectComposer(renderer);
 bloomComposer.addPass(renderScene);
@@ -60,13 +61,14 @@ import fragmentShader from '../shaders/fragment.glsl';
 const mat = new THREE.ShaderMaterial({
 	uniforms,
 	vertexShader,
-	fragmentShader
+	fragmentShader,
+	transparent: true
 });
 
-const geo = new THREE.IcosahedronGeometry(4, 17);
-const mesh = new THREE.Mesh(geo, mat);
+const geo = new THREE.IcosahedronGeometry(4, 26);
+const mesh = new THREE.Points(geo, mat);
 scene.add(mesh);
-mesh.material.wireframe = true;
+// mesh.material.wireframe = true;
 
 const listener = new THREE.AudioListener();
 camera.add(listener);
@@ -83,27 +85,12 @@ audioLoader.load('./assets/openai-fm-nova-audio.mp3', function(buffer) {
 
 const analyser = new THREE.AudioAnalyser(sound, 32);
 
-const gui = new GUI();
-
-
 uniforms.u_red.value = Number(0.3);
 
 uniforms.u_green.value = Number(0.9);
 
 
 uniforms.u_blue.value = Number(0.5);
-
-
-const bloomFolder = gui.addFolder('Bloom');
-bloomFolder.add(params, 'threshold', 0, 1).onChange(function(value) {
-	bloomPass.threshold = Number(value);
-});
-bloomFolder.add(params, 'strength', 0, 3).onChange(function(value) {
-	bloomPass.strength = Number(value);
-});
-bloomFolder.add(params, 'radius', 0, 1).onChange(function(value) {
-	bloomPass.radius = Number(value);
-});
 
 let mouseX = 0;
 let mouseY = 0;

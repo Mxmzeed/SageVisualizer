@@ -96,9 +96,47 @@ float pnoise(vec3 P, vec3 rep)
 
 uniform float u_frequency;
 
+varying float vDepth;
+
 void main() {
+    // 1. Distort distribution: push points towards poles
+    float r = length(position);
+    float y = position.y / r;       // Normalized Y (-1 to 1)
+    
+    // Distortion power < 1.0 pushes points away from 0 towards +/- 1
+    float distortion = 0.6; // Adjust closer to 0 for more extreme bunching
+    float newY = sign(y) * pow(abs(y), distortion);
+    
+    // Calculate new XZ radius to stay on sphere surface
+    float oldRadiusXZ = sqrt(clamp(1.0 - y * y, 0.0, 1.0));
+    float newRadiusXZ = sqrt(clamp(1.0 - newY * newY, 0.0, 1.0));
+    
+    vec3 distortedPos = position;
+    distortedPos.y = newY * r;
+    
+    // Scale X and Z to maintain spherical shape
+    if (oldRadiusXZ > 0.001) {
+        float scaleXZ = newRadiusXZ / oldRadiusXZ;
+        distortedPos.x *= scaleXZ;
+        distortedPos.z *= scaleXZ;
+    }
+
+    vec3 distortedNormal = normalize(distortedPos);
+
+    // 2. Apply noise displacement
+    // We use original position for noise coordinates to avoid stretching the noise texture
     float noise = 1.5 * pnoise(position + u_time, vec3(10.0));
-    float displacement = (u_frequency / 30.) * (noise / 10.);
-    vec3 newPosition = position + normal * displacement;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+    
+    // Reduce displacement away from equator (y=0)
+    // At equator: factor = 1.0, at poles: factor = 0.0
+    float latitudeFactor = 1.0 - abs(distortedNormal.y);
+    
+    float displacement = (u_frequency / 30.) * (noise / 10.) * latitudeFactor;
+    
+    vec3 finalPosition = distortedPos + distortedNormal * displacement;
+    vec4 mvPosition = modelViewMatrix * vec4(finalPosition, 1.0);
+    
+    gl_Position = projectionMatrix * mvPosition;
+    gl_PointSize = 22.0 / -mvPosition.z;
+    vDepth = -mvPosition.z;
 }
